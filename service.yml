@@ -1,0 +1,21 @@
+backup:
+  enabled: false
+  retention: 7
+  schedule: 0 2 * * *
+description: Сервис sentry
+display_name: Sentry
+health:
+  enabled: true
+  endpoint: /healthz
+  interval: 30s
+maintainer: team@example.com
+name: sentry
+routing:
+- base_domain: apps.example.com
+  internal_port: 8000
+  path: /sentry
+  strip_prefix: true
+  type: subfolder
+type: docker-compose
+version: 1.0.0
+visibility: internal

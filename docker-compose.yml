@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  sentry:
+    build: .
+    container_name: sentry
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    networks:
+      - servicenet
+      - platform
+    environment:
+      - ENV=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+networks:
+  servicenet:
+    name: sentry_network
+  platform:
+    external: true
+    name: platform_network
