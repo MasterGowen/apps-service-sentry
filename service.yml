@@ -7,7 +7,7 @@ visibility: internal
 
 routing:
   - type: subfolder
-    base_domain: apps.urfu.online
+    base_domain: apps.openedu.urfu.ru
     path: /sentry
     internal_port: 9000
     container_name: sentry-web

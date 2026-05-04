@@ -5,7 +5,7 @@
 # Переопределение домена для dev/staging
 routing:
   - type: subfolder
-    base_domain: apps.dev.urfu.online
+    base_domain: apps.dev.openedu.urfu.ru
     path: /sentry
 
 # Более редкие health checks для экономии ресурсов
