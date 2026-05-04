@@ -1,0 +1,24 @@
+# Пример локальных переопределений для service.yml
+# Скопируйте в service.local.yml и измените под свои нужды
+# Этот файл мержится поверх service.yml платформой
+
+# Переопределение домена для dev/staging
+routing:
+  - type: subfolder
+    base_domain: apps.dev.urfu.online
+    path: /sentry
+
+# Более редкие health checks для экономии ресурсов
+health:
+  interval: 60s
+  timeout: 15s
+
+# Включить backup для production (если потребуется)
+backup:
+  enabled: true
+  schedule: "0 3 * * *"
+  retention: 14
+  databases:
+    - type: postgres
+      container: sentry-postgres
+      database: sentry
