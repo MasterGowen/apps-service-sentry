@@ -64,7 +64,7 @@ docker exec -it sentry-web sentry createuser \
 
 ### 4. Доступ к интерфейсу
 
-- **URL**: `https://apps.urfu.online/sentry`
+- **URL**: `https://apps.openedu.urfu.ru/sentry`
 - **Login**: email из команды `createuser`
 - **Password**: пароль из команды `createuser`
 
@@ -132,7 +132,7 @@ pip install sentry-sdk
 import sentry_sdk
 
 sentry_sdk.init(
-    dsn="https://PUBLIC_KEY@apps.urfu.online/sentry/PROJECT_ID",
+    dsn="https://PUBLIC_KEY@apps.openedu.urfu.ru/sentry/PROJECT_ID",
     traces_sample_rate=1.0,
 )
 ```
@@ -147,7 +147,7 @@ npm install @sentry/browser
 import * as Sentry from "@sentry/browser";
 
 Sentry.init({
-  dsn: "https://PUBLIC_KEY@apps.urfu.online/sentry/PROJECT_ID",
+  dsn: "https://PUBLIC_KEY@apps.openedu.urfu.ru/sentry/PROJECT_ID",
 });
 ```
 
@@ -156,7 +156,7 @@ DSN получается в: **Project Settings → Client Keys (DSN)**
 ## 🧩 Архитектура
 
 ```
-apps.urfu.online/sentry (Caddy)
+apps.openedu.urfu.ru/sentry (Caddy)
            ↓
     sentry-web :9000
          ↓     ↓
