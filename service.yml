@@ -1,21 +1,26 @@
-backup:
-  enabled: false
-  retention: 7
-  schedule: 0 2 * * *
-description: Сервис sentry
+name: sentry
 display_name: Sentry
+version: 1.0.0
+description: Система мониторинга и отслеживания ошибок Sentry (self-hosted, минимальная конфигурация)
+type: docker-compose
+visibility: internal
+
+routing:
+  - type: subfolder
+    base_domain: apps.urfu.online
+    path: /sentry
+    internal_port: 9000
+    container_name: sentry-web
+    strip_prefix: true
+
 health:
   enabled: true
-  endpoint: /healthz
+  endpoint: /api/0/health/
   interval: 30s
-maintainer: team@example.com
-name: sentry
-routing:
-- base_domain: apps.example.com
-  internal_port: 8000
-  path: /sentry
-  strip_prefix: true
-  type: subfolder
-type: docker-compose
-version: 1.0.0
-visibility: internal
+  timeout: 10s
+  retries: 3
+
+backup:
+  enabled: false
+  schedule: "0 2 * * *"
+  retention: 7

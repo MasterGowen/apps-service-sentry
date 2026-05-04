@@ -1,2 +1,21 @@
+# Environment
 .env
+*.local.yml
+
+# Volumes (если используются bind mounts)
+volumes/
+data/
+
+# Backups
+backups/
+
+# Database
+*.db
+*.sqlite
+
+# Documentation (auto-generated)
 combined.md
+
+# Logs
+*.log
+logs/
