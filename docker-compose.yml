@@ -1,24 +1,155 @@
 version: "3.8"
+
 services:
-  sentry:
-    build: .
-    container_name: sentry
+  # ============================================
+  # 1. SENTRY WEB — основной UI + API
+  # ============================================
+  sentry-web:
+    image: sentry:24
+    container_name: sentry-web
     restart: unless-stopped
-    ports:
-      - "8000:8000"
     networks:
-      - servicenet
-      - platform
+      - platform_network
+      - sentry_internal
     environment:
-      - ENV=production
+      # Core
+      SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
+      # Database
+      SENTRY_POSTGRES_HOST: postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: ${SENTRY_DB_NAME:-sentry}
+      SENTRY_DB_USER: ${SENTRY_DB_USER}
+      SENTRY_DB_PASSWORD: ${SENTRY_DB_PASSWORD}
+      # Redis
+      SENTRY_REDIS_HOST: redis
+      SENTRY_REDIS_PORT: 6379
+      # Service
+      SENTRY_WEB_HOST: 0.0.0.0
+      SENTRY_WEB_PORT: 9000
+      # Mail (optional)
+      SENTRY_MAIL_HOST: ${SENTRY_MAIL_HOST:-}
+      SENTRY_MAIL_PORT: ${SENTRY_MAIL_PORT:-}
+      SENTRY_MAIL_USERNAME: ${SENTRY_MAIL_USERNAME:-}
+      SENTRY_MAIL_PASSWORD: ${SENTRY_MAIL_PASSWORD:-}
+      SENTRY_MAIL_USE_TLS: ${SENTRY_MAIL_USE_TLS:-false}
+      SENTRY_SERVER_EMAIL: ${SENTRY_SERVER_EMAIL:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:9000/api/0/health/"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 60s
+
+  # ============================================
+  # 2. SENTRY WORKER — обработка событий
+  # ============================================
+  sentry-worker:
+    image: sentry:24
+    container_name: sentry-worker
+    restart: unless-stopped
+    command: run worker
+    networks:
+      - sentry_internal
+    environment:
+      SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
+      SENTRY_POSTGRES_HOST: postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: ${SENTRY_DB_NAME:-sentry}
+      SENTRY_DB_USER: ${SENTRY_DB_USER}
+      SENTRY_DB_PASSWORD: ${SENTRY_DB_PASSWORD}
+      SENTRY_REDIS_HOST: redis
+      SENTRY_REDIS_PORT: 6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ============================================
+  # 3. SENTRY CRON — фоновые задачи
+  # ============================================
+  sentry-cron:
+    image: sentry:24
+    container_name: sentry-cron
+    restart: unless-stopped
+    command: run cron
+    networks:
+      - sentry_internal
+    environment:
+      SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
+      SENTRY_POSTGRES_HOST: postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: ${SENTRY_DB_NAME:-sentry}
+      SENTRY_DB_USER: ${SENTRY_DB_USER}
+      SENTRY_DB_PASSWORD: ${SENTRY_DB_PASSWORD}
+      SENTRY_REDIS_HOST: redis
+      SENTRY_REDIS_PORT: 6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ============================================
+  # 4. POSTGRESQL — основная БД
+  # ============================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: sentry-postgres
+    restart: unless-stopped
+    networks:
+      - sentry_internal
+    environment:
+      POSTGRES_USER: ${SENTRY_DB_USER}
+      POSTGRES_PASSWORD: ${SENTRY_DB_PASSWORD}
+      POSTGRES_DB: ${SENTRY_DB_NAME:-sentry}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - sentry-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SENTRY_DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # 5. REDIS — кэш и очереди
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: sentry-redis
+    restart: unless-stopped
+    networks:
+      - sentry_internal
+    volumes:
+      - sentry-redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# ============================================
+# NETWORKS
+# ============================================
 networks:
-  servicenet:
-    name: sentry_network
-  platform:
+  platform_network:
     external: true
     name: platform_network
+  sentry_internal:
+    name: sentry_internal
+    internal: true
+
+# ============================================
+# VOLUMES
+# ============================================
+volumes:
+  sentry-postgres:
+    name: sentry-postgres
+  sentry-redis:
+    name: sentry-redis
