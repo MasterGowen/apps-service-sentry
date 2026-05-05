@@ -22,7 +22,7 @@ sentry/
 ├── README.md            # Минимальный
 └── src/                 # Пустая папка
     └── __init__.py
-```text
+```
 
 ## 2. Целевая архитектура
 
@@ -54,7 +54,7 @@ sentry/
 │  │  (metadata)  │                   │ (cache+queue)│   │
 │  └──────────────┘                   └──────────────┘   │
 └─────────────────────────────────────────────────────────┘
-```text
+```
 
 ### Сервисы (5 контейнеров)
 
@@ -119,7 +119,7 @@ backup:
   enabled: false
   schedule: "0 2 * * *"
   retention: 7
-```text
+```
 
 ### docker-compose.yml - Ключевые моменты
 
@@ -142,7 +142,7 @@ SENTRY_DB_USER: ${SENTRY_DB_USER}
 SENTRY_DB_PASSWORD: ${SENTRY_DB_PASSWORD}
 SENTRY_REDIS_HOST: redis
 SENTRY_REDIS_PORT: 6379
-```text
+```
 
 **Depends_on с условиями:**
 
@@ -152,7 +152,7 @@ depends_on:
     condition: service_healthy
   redis:
     condition: service_healthy
-```text
+```
 
 ### .env.example
 
@@ -175,7 +175,7 @@ volumes/
 backups/
 *.db
 combined.md
-```text
+```
 
 ### README.md
 
@@ -198,7 +198,7 @@ routing:
   - base_domain: apps.dev.example.com
 health:
   interval: 60s
-```text
+```
 
 ## 4. Порядок внедрения
 
@@ -294,7 +294,7 @@ sentry/
 ├── service.local.yml.example   # ✅ Пример для переопределений
 └── plans/
     └── sentry-refactoring.md   # Этот документ
-```text
+```
 
 ## 8. Проверка готовности
 

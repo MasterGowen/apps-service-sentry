@@ -61,7 +61,7 @@ sentry/
     ├── sentry-refactoring.md      # Детальный план
     ├── architecture-diagram.md    # Mermaid диаграммы
     └── implementation-spec.md     # Спецификация для кода
-```text
+```
 
 **Удалено**: `src/` (не нужна для официальных образов)
 
@@ -80,7 +80,7 @@ git checkout -b feature/sentry-blueprint-refactor
 
 # Pull Request
 git push origin feature/sentry-blueprint-refactor
-```text
+```
 
 ## ⚠️ Важные замечания
 

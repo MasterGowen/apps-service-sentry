@@ -52,7 +52,7 @@ graph TB
     style Cron fill:#d4edda
     style Postgres fill:#fff3cd
     style Redis fill:#fff3cd
-```text
+```
 
 ## Потоки данных
 
@@ -73,7 +73,7 @@ sequenceDiagram
     Worker->>DB: Update statistics
     
     Note over Web,DB: Асинхронная обработка<br/>для быстрого ответа клиенту
-```text
+```
 
 ## Состав контейнеров
 
@@ -99,7 +99,7 @@ graph LR
     style CR fill:#90EE90
     style PG fill:#FFD700
     style RD fill:#FFD700
-```text
+```
 
 ## Сетевая топология
 
@@ -126,7 +126,7 @@ graph TB
     Worker --> Redis
     Cron --> PG
     Cron --> Redis
-```text
+```
 
 ## Volumes и персистентность
 
@@ -144,7 +144,7 @@ graph LR
     
     PGV -.mount.-> PG
     RDV -.mount.-> RD
-```text
+```
 
 ## Health Checks
 
@@ -162,7 +162,7 @@ stateDiagram-v2
         postgres:   pg_isready -U user
         redis:      redis-cli ping
     end note
-```text
+```
 
 **Ресурсы**: ~1.5–2 ГБ ОЗУ, ~5–10 ГБ дискового пространства
 **Контейнеры**: 5 (sentry-web, sentry-worker, sentry-cron, postgres, redis)

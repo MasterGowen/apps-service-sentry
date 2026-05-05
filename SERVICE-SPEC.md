@@ -31,7 +31,7 @@ backup:
   enabled: false
   schedule: "0 2 * * *"
   retention: 7
-```text
+```
 
 Обязательное поле `container_name` необходимо для интеграции с Caddy через `platform_network`.
 
@@ -167,7 +167,7 @@ volumes:
     name: sentry-postgres
   sentry-redis:
     name: sentry-redis
-```text
+```
 
 Ключевые характеристики:
 
@@ -199,7 +199,7 @@ SENTRY_MAIL_USERNAME=
 SENTRY_MAIL_PASSWORD=
 SENTRY_MAIL_USE_TLS=true
 SENTRY_SERVER_EMAIL=sentry@example.com
-```text
+```
 
 ### .gitignore
 
@@ -225,7 +225,7 @@ combined.md
 # Logs
 *.log
 logs/
-```text
+```
 
 ## Локальные переопределения
 
@@ -252,6 +252,6 @@ backup:
     - type: postgres
       container: sentry-postgres
       database: sentry
-```text
+```
 
 Файл объединяется с `service.yml` платформой при деплое.

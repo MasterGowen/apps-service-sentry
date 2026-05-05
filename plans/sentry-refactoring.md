@@ -22,11 +22,11 @@ sentry/
 ├── README.md            # Минимальный
 └── src/                 # Пустая папка
     └── __init__.py
-```text
+```
 
 ## 2. Целевая архитектура
 
-### Компоненты решения:
+### Компоненты решения
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
@@ -54,9 +54,9 @@ sentry/
 │  │  (metadata)  │                   │ (cache+queue)│   │
 │  └──────────────┘                   └──────────────┘   │
 └─────────────────────────────────────────────────────────┘
-```text
+```
 
-### Сервисы (5 контейнеров):
+### Сервисы (5 контейнеров)
 
 1. **sentry-web** - основной контейнер (UI + API)
    - Образ: `sentry:24` (latest stable)
@@ -83,7 +83,7 @@ sentry/
    - Volume: `sentry-redis`
    - Health: `redis-cli ping`
 
-### Сети:
+### Сети
 
 - **platform_network** (external) - для интеграции с Caddy
 - **sentry_internal** (internal) - для взаимодействия между компонентами
@@ -119,11 +119,12 @@ backup:
   enabled: false
   schedule: "0 2 * * *"
   retention: 7
-```text
+```
 
-### docker-compose.yml - Ключевые моменты:
+### docker-compose.yml - Ключевые моменты
 
 **Общие правила:**
+
 - Все контейнеры в `platform_network` (для Caddy)
 - БД и Redis дополнительно в `sentry_internal`
 - Используются named volumes (не bind mounts)
@@ -131,6 +132,7 @@ backup:
 - `restart: unless-stopped` для всех
 
 **Переменные окружения (общие для sentry-*):**
+
 ```yaml
 SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
 SENTRY_POSTGRES_HOST: postgres
@@ -140,20 +142,22 @@ SENTRY_DB_USER: ${SENTRY_DB_USER}
 SENTRY_DB_PASSWORD: ${SENTRY_DB_PASSWORD}
 SENTRY_REDIS_HOST: redis
 SENTRY_REDIS_PORT: 6379
-```text
+```
 
 **Depends_on с условиями:**
+
 ```yaml
 depends_on:
   postgres:
     condition: service_healthy
   redis:
     condition: service_healthy
-```text
+```
 
 ### .env.example
 
 Основные переменные:
+
 - `SENTRY_SECRET_KEY` - генерируется при установке
 - `SENTRY_DB_USER` / `SENTRY_DB_PASSWORD` - учетные данные PostgreSQL
 - `SENTRY_DB_NAME` - имя БД (по умолчанию: sentry)
@@ -163,6 +167,7 @@ depends_on:
 ### .gitignore
 
 Добавить:
+
 ```text
 .env
 service.local.yml
@@ -170,11 +175,12 @@ volumes/
 backups/
 *.db
 combined.md
-```text
+```
 
 ### README.md
 
 Разделы:
+
 1. Описание (что это за сервис)
 2. Требования (минимум ресурсов: ~2GB RAM)
 3. Быстрый старт (4 шага)
@@ -186,34 +192,40 @@ combined.md
 ### service.local.yml (пример)
 
 Для переопределения параметров в dev/staging:
+
 ```yaml
 routing:
   - base_domain: apps.dev.example.com
 health:
   interval: 60s
-```text
+```
 
 ## 4. Порядок внедрения
 
 ### Этап 1: Подготовка
+
 - Удалить папку `src/` (не нужна для официальных образов)
 - Обновить `.gitignore`
 
 ### Этап 2: Конфигурация
+
 - Исправить `service.yml` (добавить container_name, убрать maintainer)
 - Создать полный `.env.example`
 - Создать `service.local.yml` example
 
 ### Этап 3: Инфраструктура
+
 - Переписать `docker-compose.yml` с 5 сервисами
 - Добавить volumes, networks, health checks
 - Настроить depends_on с условиями
 
 ### Этап 4: Документация
+
 - Обновить `README.md` с инструкциями
 - Добавить примеры команд
 
 ### Этап 5: Git workflow
+
 - Создать feature ветку
 - Коммиты по логическим блокам
 - Создать PR для review
@@ -221,23 +233,27 @@ health:
 ## 5. Соответствие контракту платформы
 
 ✅ **Обязательные файлы:**
+
 - `service.yml` - минимально необходимые поля
 - `docker-compose.yml` - тип docker-compose
 - `.env.example` - шаблон переменных
 - `service.local.yml` example - для переопределений
 
 ✅ **service.yml - только поддерживаемые поля:**
+
 - Meta: name, display_name, version, description, type, visibility
 - Routing: с обязательным container_name
 - Health: enabled, endpoint, interval, timeout, retries
 - Backup: отключен (enabled: false)
 
 ✅ **docker-compose.yml - требования:**
+
 - `container_name: sentry-web` совпадает с routing
 - Сеть `platform_network` (external: true)
 - Без пробоса портов наружу (только internal)
 
 ❌ **НЕ включать (не поддерживается платформой):**
+
 - resources, dependencies, logging
 - secrets (кроме через .env)
 - hooks, notifications (кроме базового telegram)
@@ -245,20 +261,23 @@ health:
 
 ## 6. Минимализм vs Функциональность
 
-### ✅ Включено (минимум для работы Sentry):
+### ✅ Включено (минимум для работы Sentry)
+
 - PostgreSQL (необходима для metadata)
 - Redis (необходим для очередей и кэша)
 - Worker (необходим для обработки событий)
 - Cron (необходим для cleanup задач)
 
-### ❌ НЕ включено (оверхед):
+### ❌ НЕ включено (оверхед)
+
 - Clickhouse (отказ по требованию)
 - MemCached (Redis справляется)
 - Kafka (избыточно для низкой нагрузки)
 - Relay (не нужен для internal usage)
 - Nginx (Caddy уже есть на платформе)
 
-### Оценка ресурсов:
+### Оценка ресурсов
+
 - **RAM**: ~1.5-2GB (все контейнеры)
 - **Disk**: ~5-10GB (с учетом роста БД)
 - **CPU**: минимально (low traffic)
@@ -275,7 +294,7 @@ sentry/
 ├── service.local.yml.example   # ✅ Пример для переопределений
 └── plans/
     └── sentry-refactoring.md   # Этот документ
-```text
+```
 
 ## 8. Проверка готовности
 

@@ -6,7 +6,7 @@
 
 ```bash
 docker logs sentry-web
-```text
+```
 
 Возможные причины:
 
@@ -20,7 +20,7 @@ docker logs sentry-web
 
 ```bash
 docker exec -it sentry-web wget -O- http://localhost:9000/api/0/health/
-```text
+```
 
 Если ответ 502 — возможно, сервис ещё не запустился (ожидание до 2 минут).
 

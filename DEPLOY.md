@@ -27,13 +27,13 @@ Sentry — система мониторинга ошибок с открыты�
 
 ```bash
 cp .env.example .env
-```text
+```
 
 Сгенерируйте секретный ключ:
 
 ```bash
 openssl rand -base64 50
-```text
+```
 
 Установите значения в `.env`:
 
@@ -46,9 +46,10 @@ openssl rand -base64 50
 
 ```bash
 platform deploy sentry
-```text
+```
 
 Платформа автоматически:
+
 - Запустит контейнеры
 - Настроит маршрутизацию через Caddy
 - Активирует health monitoring
@@ -59,7 +60,7 @@ platform deploy sentry
 
 ```bash
 docker exec -it sentry-web sentry upgrade --noinput
-```text
+```
 
 Создайте учётную запись суперпользователя:
 
@@ -69,7 +70,7 @@ docker exec -it sentry-web sentry createuser \
   --password admin123 \
   --superuser \
   --no-input
-```text
+```
 
 ### Доступ к интерфейсу
 
@@ -78,6 +79,7 @@ docker exec -it sentry-web sentry createuser \
 - Пароль: пароль из команды `createuser`
 
 После входа необходимо:
+
 - Создать организацию
 - Создать проект, выбрав платформу
 - Получить DSN в разделе **Project Settings → Client Keys (DSN)**
@@ -104,32 +106,33 @@ docker exec -it sentry-web sentry createuser \
 
 ```bash
 platform logs sentry
-```text
+```
 
 Просмотр логов конкретного контейнера:
 
 ```bash
 docker logs sentry-web -f
 docker logs sentry-worker -f
-```text
+```
 
 ### Остановка и запуск
 
 ```bash
 platform stop sentry
 platform start sentry
-```text
+```
 
 ### Статус
 
 ```bash
 platform status sentry
 docker ps | grep sentry
-```text
+```
 
 ### Очистка старых событий
 
 Настройка срока хранения событий осуществляется в интерфейсе:
+
 - **Settings → Data → Data Scrubbing**
 - **Retention** — указание периода хранения
 
@@ -141,7 +144,7 @@ docker ps | grep sentry
 
 ```bash
 pip install sentry-sdk
-```text
+```
 
 Инициализация:
 
@@ -152,7 +155,7 @@ sentry_sdk.init(
     dsn="https://PUBLIC_KEY@apps.openedu.urfu.ru/sentry/PROJECT_ID",
     traces_sample_rate=1.0,
 )
-```text
+```
 
 ### JavaScript
 
@@ -160,7 +163,7 @@ sentry_sdk.init(
 
 ```bash
 npm install @sentry/browser
-```text
+```
 
 Инициализация:
 
@@ -170,7 +173,7 @@ import * as Sentry from "@sentry/browser";
 Sentry.init({
   dsn: "https://PUBLIC_KEY@apps.openedu.urfu.ru/sentry/PROJECT_ID",
 });
-```text
+```
 
 DSN доступен в разделе: **Project Settings → Client Keys (DSN)**
 

@@ -42,7 +42,7 @@ graph TB
     style Cron fill:#d4edda
     style Postgres fill:#fff3cd
     style Redis fill:#fff3cd
-```text
+```
 
 ## Потоки данных
 
@@ -63,7 +63,7 @@ sequenceDiagram
     Worker->>DB: Update statistics
     
     Note over Web,DB: Асинхронная обработка<br/>для быстрого ответа клиенту
-```text
+```
 
 ## Состав контейнеров
 
@@ -89,7 +89,7 @@ graph LR
     style CR fill:#90EE90
     style PG fill:#FFD700
     style RD fill:#FFD700
-```text
+```
 
 ## Сетевая топология
 
@@ -122,7 +122,7 @@ graph TB
     style platform_network fill:#ffe1e1
     style sentry_internal fill:#e1f5ff
     style Note1 fill:#fff9c4
-```text
+```
 
 ## Volumes и персистентность
 
@@ -146,7 +146,7 @@ graph LR
     style Volumes fill:#fff3cd
     style Containers fill:#d4edda
     style Note fill:#f8d7da
-```text
+```
 
 ## Health Checks
 
@@ -170,7 +170,7 @@ stateDiagram-v2
         Telegram уведомление
         Caddy исключит из upstream
     end note
-```text
+```
 
 ---
 

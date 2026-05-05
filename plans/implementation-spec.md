@@ -47,7 +47,7 @@ backup:
   enabled: false
   schedule: "0 2 * * *"
   retention: 7
-```text
+```
 
 **Удалить**: поле `maintainer` (не входит в контракт)
 
@@ -58,6 +58,7 @@ backup:
 **Файл**: `docker-compose.yml`
 
 **Текущие проблемы**:
+
 - ❌ Один контейнер (нужно 5)
 - ❌ `build: .` без Dockerfile
 - ❌ Лишняя сеть `servicenet`
@@ -222,9 +223,10 @@ volumes:
     name: sentry-postgres
   sentry-redis:
     name: sentry-redis
-```text
+```
 
 **Ключевые моменты**:
+
 - ✅ 5 контейнеров: web, worker, cron, postgres, redis
 - ✅ Только sentry-web в `platform_network`
 - ✅ Все в `sentry_internal` для межсервисного взаимодействия
@@ -276,7 +278,7 @@ SENTRY_SERVER_EMAIL=sentry@example.com
 # 3. Для генерации SENTRY_SECRET_KEY используйте:
 #    openssl rand -base64 50
 # 4. НИКОГДА не коммитьте .env в git!
-```text
+```
 
 ---
 
@@ -308,7 +310,7 @@ combined.md
 # Logs
 *.log
 logs/
-```text
+```
 
 ---
 
@@ -341,7 +343,7 @@ backup:
     - type: postgres
       container: sentry-postgres
       database: sentry
-```text
+```
 
 ---
 
@@ -382,9 +384,10 @@ openssl rand -base64 50
 
 # Отредактировать .env и вставить ключ
 nano .env
-```text
+```
 
 **Обязательно изменить**:
+
 - `SENTRY_SECRET_KEY` - на сгенерированный ключ
 - `SENTRY_DB_PASSWORD` - на сильный пароль
 
@@ -393,9 +396,10 @@ nano .env
 ```bash
 # Из директории master service
 platform deploy sentry
-```text
+```
 
 Платформа автоматически:
+
 - Создаст контейнеры
 - Настроит Caddy routing
 - Запустит health monitoring
@@ -414,7 +418,7 @@ docker exec -it sentry-web sentry createuser \
   --password admin123 \
   --superuser \
   --no-input
-```text
+```
 
 ### 4. Доступ к интерфейсу
 
@@ -423,6 +427,7 @@ docker exec -it sentry-web sentry createuser \
 - Password: пароль из команды createuser
 
 После первого входа:
+
 1. Создайте организацию
 2. Создайте проект (выберите платформу)
 3. Получите DSN для интеграции с приложениями
@@ -452,25 +457,26 @@ platform logs sentry
 # Конкретный контейнер
 docker logs sentry-web -f
 docker logs sentry-worker -f
-```text
+```
 
 ### Остановка/запуск
 
 ```bash
 platform stop sentry
 platform start sentry
-```text
+```
 
 ### Статус
 
 ```bash
 platform status sentry
 docker ps | grep sentry
-```text
+```
 
 ### Очистка старых событий
 
 Sentry автоматически чистит старые события через sentry-cron. Настройка в UI:
+
 - Settings → Data → Data Scrubbing
 - Retention: настройка хранения событий
 
@@ -480,7 +486,7 @@ Sentry автоматически чистит старые события че�
 
 ```bash
 pip install sentry-sdk
-```text
+```
 
 ```python
 import sentry_sdk
@@ -489,13 +495,13 @@ sentry_sdk.init(
     dsn="https://PUBLIC_KEY@apps.openedu.urfu.ru/sentry/PROJECT_ID",
     traces_sample_rate=1.0,
 )
-```text
+```
 
 ### JavaScript
 
 ```bash
 npm install @sentry/browser
-```text
+```
 
 ```javascript
 import * as Sentry from "@sentry/browser";
@@ -503,7 +509,7 @@ import * as Sentry from "@sentry/browser";
 Sentry.init({
   dsn: "https://PUBLIC_KEY@apps.openedu.urfu.ru/sentry/PROJECT_ID",
 });
-```text
+```
 
 DSN получается в: Project Settings → Client Keys (DSN)
 
@@ -518,7 +524,7 @@ apps.openedu.urfu.ru/sentry (Caddy)
          ↓     ↓
     sentry-worker
     sentry-cron
-```text
+```
 
 - **platform_network**: sentry-web (для Caddy)
 - **sentry_internal**: все сервисы (изолированно)
@@ -535,7 +541,7 @@ docker logs sentry-web
 # 1. SENTRY_SECRET_KEY не задан или короткий
 # 2. Нет миграций - выполнить: docker exec -it sentry-web sentry upgrade
 # 3. PostgreSQL не готов - проверить: docker logs sentry-postgres
-```text
+```
 
 ### Health check failed
 
@@ -547,7 +553,7 @@ docker exec -it sentry-web wget -O- http://localhost:9000/api/0/health/
 # 1. Проверить, что sentry-web запущен: docker ps
 # 2. Проверить логи: docker logs sentry-web
 # 3. Возможно долгий старт - подождать 1-2 минуты
-```text
+```
 
 ### Worker не обрабатывает события
 
@@ -561,7 +567,7 @@ docker exec -it sentry-redis redis-cli ping
 
 # Перезапустить worker
 docker restart sentry-worker
-```text
+```
 
 ### Ошибки БД
 
@@ -574,7 +580,7 @@ docker exec -it sentry-web sentry upgrade
 
 # Backup БД (ручной)
 docker exec -it sentry-postgres pg_dump -U sentry sentry > sentry_backup.sql
-```text
+```
 
 ## 📝 Примечания
 
@@ -588,7 +594,8 @@ docker exec -it sentry-postgres pg_dump -U sentry sentry > sentry_backup.sql
 - [Официальная документация Sentry](https://docs.sentry.io/)
 - [Self-hosted Guide](https://develop.sentry.dev/self-hosted/)
 - [SDK Documentation](https://docs.sentry.io/platforms/)
-```text
+
+```
 
 ---
 
@@ -600,7 +607,7 @@ docker exec -it sentry-postgres pg_dump -U sentry sentry > sentry_backup.sql
 
 ```bash
 rm -rf src/
-```text
+```
 
 ---
 
@@ -610,7 +617,7 @@ rm -rf src/
 
 ```bash
 git checkout -b feature/sentry-blueprint-refactor
-```text
+```
 
 ### Коммиты по этапам
 
@@ -635,13 +642,13 @@ git commit -m "feat: add comprehensive environment variables and local overrides
 # После обновления документации
 git add README.md plans/
 git commit -m "docs: add detailed README and architecture plans"
-```text
+```
 
 ### Создание Pull Request
 
 ```bash
 git push origin feature/sentry-blueprint-refactor
-```text
+```
 
 Далее создать PR через интерфейс Git платформы с описанием:
 
@@ -664,7 +671,7 @@ git push origin feature/sentry-blueprint-refactor
 - [ ] docker-compose up успешно запускает все 5 сервисов
 - [ ] Health endpoints отвечают корректно
 - [ ] Caddy routing работает через platform_network
-```text
+```
 
 ---
 

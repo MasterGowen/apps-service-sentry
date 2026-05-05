@@ -4,7 +4,7 @@
 
 ```bash
 git checkout -b feature/sentry-blueprint-refactor
-```text
+```
 
 ## Коммиты
 
@@ -19,7 +19,7 @@ git checkout -b feature/sentry-blueprint-refactor
 
 ```bash
 git push origin feature/sentry-blueprint-refactor
-```text
+```
 
 PR должен содержать:
 
