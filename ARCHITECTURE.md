@@ -1,6 +1,16 @@
-# Sentry Architecture Diagram
+# Архитектура Sentry
 
-## Архитектура решения
+## Архитектура компонентов
+
+Sentry состоит из пяти сервисов:
+
+- sentry-web — пользовательский интерфейс и API (порт 9000)
+- sentry-worker — обработка очереди событий
+- sentry-cron — выполнение периодических задач
+- postgres — хранение метаданных и событий
+- redis — реализация очередей и кэширование
+
+Сеть platform_network используется только для маршрутизации через Caddy.
 
 ```mermaid
 graph TB
@@ -116,12 +126,6 @@ graph TB
     Worker --> Redis
     Cron --> PG
     Cron --> Redis
-    
-    Note1[Только sentry-web доступен<br/>из platform_network<br/>для проксирования через Caddy]
-    
-    style platform_network fill:#ffe1e1
-    style sentry_internal fill:#e1f5ff
-    style Note1 fill:#fff9c4
 ```text
 
 ## Volumes и персистентность
@@ -140,12 +144,6 @@ graph LR
     
     PGV -.mount.-> PG
     RDV -.mount.-> RD
-    
-    Note[Backup НЕ включен<br/>данные не критичны]
-    
-    style Volumes fill:#fff3cd
-    style Containers fill:#d4edda
-    style Note fill:#f8d7da
 ```text
 
 ## Health Checks
@@ -164,17 +162,9 @@ stateDiagram-v2
         postgres:   pg_isready -U user
         redis:      redis-cli ping
     end note
-    
-    note right of Unhealthy
-        Platform отправит
-        Telegram уведомление
-        Caddy исключит из upstream
-    end note
 ```text
 
----
-
-**Ресурсы**: ~1.5-2GB RAM, ~5-10GB Disk
-**Контейнеры**: 5 (web, worker, cron, postgres, redis)
-**Сети**: 2 (platform_network, sentry_internal)
-**Volumes**: 2 (postgres, redis)
+**Ресурсы**: ~1.5–2 ГБ ОЗУ, ~5–10 ГБ дискового пространства
+**Контейнеры**: 5 (sentry-web, sentry-worker, sentry-cron, postgres, redis)
+**Сети**: platform_network (external), sentry_internal (internal)
+**Volumes**: sentry-postgres, sentry-redis

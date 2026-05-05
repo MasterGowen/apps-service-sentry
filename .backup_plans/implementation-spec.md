@@ -58,6 +58,7 @@ backup:
 **Файл**: `docker-compose.yml`
 
 **Текущие проблемы**:
+
 - ❌ Один контейнер (нужно 5)
 - ❌ `build: .` без Dockerfile
 - ❌ Лишняя сеть `servicenet`
@@ -225,6 +226,7 @@ volumes:
 ```text
 
 **Ключевые моменты**:
+
 - ✅ 5 контейнеров: web, worker, cron, postgres, redis
 - ✅ Только sentry-web в `platform_network`
 - ✅ Все в `sentry_internal` для межсервисного взаимодействия
@@ -385,6 +387,7 @@ nano .env
 ```text
 
 **Обязательно изменить**:
+
 - `SENTRY_SECRET_KEY` - на сгенерированный ключ
 - `SENTRY_DB_PASSWORD` - на сильный пароль
 
@@ -396,6 +399,7 @@ platform deploy sentry
 ```text
 
 Платформа автоматически:
+
 - Создаст контейнеры
 - Настроит Caddy routing
 - Запустит health monitoring
@@ -423,6 +427,7 @@ docker exec -it sentry-web sentry createuser \
 - Password: пароль из команды createuser
 
 После первого входа:
+
 1. Создайте организацию
 2. Создайте проект (выберите платформу)
 3. Получите DSN для интеграции с приложениями
@@ -471,6 +476,7 @@ docker ps | grep sentry
 ### Очистка старых событий
 
 Sentry автоматически чистит старые события через sentry-cron. Настройка в UI:
+
 - Settings → Data → Data Scrubbing
 - Retention: настройка хранения событий
 
@@ -588,6 +594,7 @@ docker exec -it sentry-postgres pg_dump -U sentry sentry > sentry_backup.sql
 - [Официальная документация Sentry](https://docs.sentry.io/)
 - [Self-hosted Guide](https://develop.sentry.dev/self-hosted/)
 - [SDK Documentation](https://docs.sentry.io/platforms/)
+
 ```text
 
 ---
